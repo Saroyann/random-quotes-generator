@@ -1,11 +1,33 @@
-import React, { useState } from "react"
-import { buddha, diogenes, kurt, karl, marcus, nietzsche, camus, confucius, plato, aristotle } from './assets/author/pic.js'
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import React, { useState } from "react";
+import { buddha, diogenes, kurt, karl, marcus, nietzsche, camus, confucius, plato, aristotle } from './assets/author/pic.js';
+import { motion, AnimatePresence } from "framer-motion";
+
+const Animated = ({ children, key }) => {
+  return (
+    <motion.div
+      key={key}
+      initial={{ x: '-100%', opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: '100%', opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      className="absolute inset-0 flex flex-col items-center justify-between pt-2 pb-16"
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 function App() {
-
   const [click, setClick] = useState(0);
+  const [firstColor, setFirstColor] = useState(0)
+  const [secondColor, setSecondColor] = useState(0)
+
+  const firstColorHandler = () => {
+    setFirstColor((prevColor) => (prevColor + 1) % fromColor.length);
+  }
+  const secondColorHandler = () => {
+    setSecondColor((prevColor) => (prevColor + 1) % toColor.length);
+  }
 
   const authorPic = [buddha, diogenes, kurt, karl, marcus, nietzsche, camus, confucius, plato, aristotle];
 
@@ -20,67 +42,78 @@ function App() {
     "True wisdom begins with knowing oneself.",
     "Truth hides behind the shadows of our perception.",
     "Happiness is the result of actions in harmony with virtue."
+  ];
+
+  const author = ['Buddha', 'Diogenes', 'Kurt Cobain', 'Karl Marx', 'Marcus Aurelius', 'Friedrich Nietzsche', 'Albert Camus', 'Confucius', 'Plato', 'Aristoteles'];
+
+  const fromColor = [
+    'from-[#FF6B6B]',
+    'from-[#F7DC6F]',
+    'from-[#E74C3C]',
+    'from-[#9B59B6]',
+    'from-[#34495E]',
+    'from-[#1ABC9C]',
+    'from-[#D35400]',
+    'from-[#8E44AD]',
+    'from-[#2C3E50]',
+    'from-[#16A085]'
   ]
-
-  const author = ['Buddha', 'Diogenes', 'Kurt Cobain', 'Karl Marx', 'Marcus Aurelius', 'Friedrich Nietzsche', 'Albert Camus', 'Confucius', 'Plato', 'Aristoteles']
-
-  const Animated = ({ children }) => {
-    const [ref, inView] = useInView({
-      triggerOnce: false,
-      threshold: 0.1
-    }
-    )
-
-    const controls = useAnimation();
-
-    React.useEffect(() => {
-
-
-    }, [inView, controls])
-  }
+  const toColor = [
+    'to-[#4ECDC4]',
+    'to-[#3498DB]',
+    'to-[#2ECC71]',
+    'to-[#F1C40F]',
+    'to-[#ECF0F1]',
+    'to-[#E67E22]',
+    'to-[#3498DB]',
+    'to-[#2ECC71]',
+    'to-[#F39C12]',
+    'to-[#E74C3C]'
+  ]
 
   const clickHandler = () => {
     setClick(prevClick => {
       const newIndex = Math.floor(Math.random() * quotes.length);
       return newIndex === prevClick ? (newIndex + 1) % quotes.length : newIndex;
     });
-  }
+  };
+
+  const handleClick = () => {
+    clickHandler();
+    firstColorHandler();
+    secondColorHandler();
+  };
 
   return (
-    <>
-      <div className="bg-gradient-to-r from-blue-300 to-violet-400 w-full flex justify-center items-center h-[100vh] text-center">
-
-        {/* quotes box */}
-        <motion.div
-          variants={{
-            hidden: { scale: 0, opacity: 0 },
-            visible: { scale: 1, opacity: 1 }
-          }}
-          initial='hidden'
-          animate='visible'
-          transition={{ duration: 1, delay: 0.2, ease: 'easeInOut' }}
-          className="w-full rounded-xl h-[400px] bg-white relative">
-          <motion.div
-          ref={ref}
-          variants={{
-            hidden1: {x: '-100', opacity: 0},
-            visible1: {x: '-100', opacity: 1}
-          }}
-            className="mx-auto overflow-hidden w-[150px] h-[150px] mt-2">
-            <img src={authorPic[click]} alt="" />
-          </motion.div>
-          <div className="text-center mx-auto w-[300px] absolute bottom-[8rem] left-7">
-            <p className="font-medium">{quotes[click]}</p>
-          </div>
-          <div className="mt-5 text-right mr-5 absolute bottom-24 right-0">
-            <div>- {author[click]}</div>
-          </div>
-          <button onClick={clickHandler} className="bg-gradient-to-r w-full p-3 rounded-full text-2xl font-medium text-white absolute bottom-5 left-0">next quote</button>
-        </motion.div>
-
-      </div>
-    </>
-  )
+    <div className={`bg-gradient-to-r ${fromColor[firstColor]} ${toColor[secondColor]} w-full flex justify-center items-center h-[100vh] text-center relative`}>
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1, delay: 0.2, ease: 'easeInOut' }}
+        className="w-full max-w-md rounded-xl h-[400px] bg-white relative overflow-hidden"
+      >
+        <AnimatePresence mode="wait">
+          <Animated key={click}>
+            <div className="w-[150px] h-[150px] overflow-hidden">
+              <img src={authorPic[click]} alt="" className="w-full h-full object-cover" />
+            </div>
+            <div className="px-4 flex-grow flex items-center justify-center">
+              <p className="font-medium">{quotes[click]}</p>
+            </div>
+            <div className="w-full text-right pr-5">
+              <div>- {author[click]}</div>
+            </div>
+          </Animated>
+        </AnimatePresence>
+      </motion.div>
+      <button
+        onClick={handleClick}
+        className="bg-gradient-to-r w-full p-3 rounded-full text-2xl font-medium text-white absolute bottom-14 left-0 border-2 border-white backdrop-blur-xl"
+      >
+        next quote {firstColor}
+      </button>
+    </div>
+  );
 }
 
-export default App
+export default App;
