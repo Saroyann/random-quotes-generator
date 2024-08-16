@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { buddha, diogenes, kurt, karl, marcus, nietzsche, camus, confucius, plato, aristotle } from './assets/author/pic.js'
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 function App() {
 
@@ -23,6 +24,21 @@ function App() {
 
   const author = ['Buddha', 'Diogenes', 'Kurt Cobain', 'Karl Marx', 'Marcus Aurelius', 'Friedrich Nietzsche', 'Albert Camus', 'Confucius', 'Plato', 'Aristoteles']
 
+  const Animated = ({ children }) => {
+    const [ref, inView] = useInView({
+      triggerOnce: false,
+      threshold: 0.1
+    }
+    )
+
+    const controls = useAnimation();
+
+    React.useEffect(() => {
+
+
+    }, [inView, controls])
+  }
+
   const clickHandler = () => {
     setClick(prevClick => {
       const newIndex = Math.floor(Math.random() * quotes.length);
@@ -36,17 +52,23 @@ function App() {
 
         {/* quotes box */}
         <motion.div
-        variants={{
-          hidden: { scale: 0, opacity: 0 },
-          visible: { scale: 1, opacity: 1 }
-        }}
-        initial = 'hidden'
-        animate = 'visible'
-        transition = {{duration: 1, delay: 0.2, ease: 'easeInOut'}}
-        className="w-full rounded-xl h-[400px] bg-white relative">
-          <div className="mx-auto overflow-hidden w-[150px] h-[150px] mt-2">
+          variants={{
+            hidden: { scale: 0, opacity: 0 },
+            visible: { scale: 1, opacity: 1 }
+          }}
+          initial='hidden'
+          animate='visible'
+          transition={{ duration: 1, delay: 0.2, ease: 'easeInOut' }}
+          className="w-full rounded-xl h-[400px] bg-white relative">
+          <motion.div
+          ref={ref}
+          variants={{
+            hidden1: {x: '-100', opacity: 0},
+            visible1: {x: '-100', opacity: 1}
+          }}
+            className="mx-auto overflow-hidden w-[150px] h-[150px] mt-2">
             <img src={authorPic[click]} alt="" />
-          </div>
+          </motion.div>
           <div className="text-center mx-auto w-[300px] absolute bottom-[8rem] left-7">
             <p className="font-medium">{quotes[click]}</p>
           </div>
