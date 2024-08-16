@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { buddha, diogenes, kurt, karl, marcus, nietzsche, camus, confucius, plato, aristotle } from './assets/author/pic.js'
+import { motion } from "framer-motion";
 
 function App() {
 
@@ -34,7 +35,15 @@ function App() {
       <div className="bg-gradient-to-r from-blue-300 to-violet-400 w-full flex justify-center items-center h-[100vh] text-center">
 
         {/* quotes box */}
-        <div className="w-full rounded-xl h-[400px] bg-white relative">
+        <motion.div
+        variants={{
+          hidden: { scale: 0, opacity: 0 },
+          visible: { scale: 1, opacity: 1 }
+        }}
+        initial = 'hidden'
+        animate = 'visible'
+        transition = {{duration: 1, delay: 0.2, ease: 'easeInOut'}}
+        className="w-full rounded-xl h-[400px] bg-white relative">
           <div className="mx-auto overflow-hidden w-[150px] h-[150px] mt-2">
             <img src={authorPic[click]} alt="" />
           </div>
@@ -45,7 +54,7 @@ function App() {
             <div>- {author[click]}</div>
           </div>
           <button onClick={() => clickHandler()} className="bg-gradient-to-r w-full p-3 rounded-full text-2xl font-medium text-white absolute bottom-5 left-0">next quote</button>
-        </div>
+        </motion.div>
 
       </div>
     </>
