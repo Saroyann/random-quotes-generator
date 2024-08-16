@@ -53,7 +53,7 @@ function App() {
           <div className="mt-5 text-right mr-5 absolute bottom-24 right-0">
             <div>- {author[click]}</div>
           </div>
-          <button onClick={() => clickHandler()} className="bg-gradient-to-r w-full p-3 rounded-full text-2xl font-medium text-white absolute bottom-5 left-0">next quote</button>
+          <button onClick={clickHandler} className="bg-gradient-to-r w-full p-3 rounded-full text-2xl font-medium text-white absolute bottom-5 left-0">next quote</button>
         </motion.div>
 
       </div>
